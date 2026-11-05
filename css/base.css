@@ -1,6 +1,6 @@
 :root{--obsidian:#06030b;--obsidian-2:#0b0616;--obsidian-3:#120a22;--violet:#7c3aed;--violet-deep:#4c1d95;--violet-soft:#8b5cf6;--crimson:#ff003c;--crimson-deep:#dc2626;--gold:#f59e0b;--ink:#ece7f5;--ink-dim:#b8aecb;--ink-faint:#7d7291;--line:rgba(124,58,237,.28);--line-strong:rgba(255,0,60,.4);--glass-bg:rgba(18,10,34,.55);--glass-border:rgba(139,92,246,.22);--font-display:"Syne","Outfit",sans-serif;--font-body:"Outfit",system-ui,-apple-system,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;--ease:cubic-bezier(.22,1,.36,1);--dur:180ms;--maxw:1200px}
 *,*::before,*::after{box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--obsidian)}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--obsidian);overflow-x:hidden}
 body{margin:0;min-height:100vh;background:var(--obsidian);color:var(--ink);font-family:var(--font-body);font-weight:500;font-size:1.05rem;line-height:1.6;letter-spacing:.01em;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(124,58,237,.18),transparent 60%),radial-gradient(ellipse 70% 50% at 90% 20%,rgba(255,0,60,.1),transparent 55%),radial-gradient(ellipse 90% 70% at 50% 100%,rgba(76,29,149,.22),transparent 60%),var(--obsidian)}
 #geass-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;display:block;image-rendering:auto}
