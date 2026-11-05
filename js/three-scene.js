@@ -398,12 +398,19 @@
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
 
-    pointer.x += (pointer.tx - pointer.x) * 0.08;
-    pointer.y += (pointer.ty - pointer.y) * 0.08;
-    scroll.progress += (scroll.target - scroll.progress) * 0.06;
+    const alphaPointer = 1 - Math.exp(-6 * dt);
+    const alphaScroll = 1 - Math.exp(-4 * dt);
+    const alphaLight = 1 - Math.exp(-8 * dt);
+    const alphaCamera = 1 - Math.exp(-4 * dt);
+
+    pointer.x += (pointer.tx - pointer.x) * alphaPointer;
+    pointer.y += (pointer.ty - pointer.y) * alphaPointer;
+    scroll.progress += (scroll.target - scroll.progress) * alphaScroll;
 
     pointerWorld.set(pointer.x * 8, pointer.y * 5, 4);
-    cursorLight.position.lerp(pointerWorld, 0.12);
+    cursorLight.position.x += (pointerWorld.x - cursorLight.position.x) * alphaLight;
+    cursorLight.position.y += (pointerWorld.y - cursorLight.position.y) * alphaLight;
+    cursorLight.position.z += (pointerWorld.z - cursorLight.position.z) * alphaLight;
 
     orbitLight.position.x = Math.cos(t * 0.4) * 8;
     orbitLight.position.z = Math.sin(t * 0.4) * 8 - 4;
@@ -469,9 +476,9 @@
     const camX = pointer.x * 0.8 + Math.sin(scroll.progress * Math.PI) * 1.5;
     const camY = 0.4 + pointer.y * 0.4 + scroll.progress * 2.4;
     const camZ = 9 - scroll.progress * 3.2;
-    camera.position.x += (camX - camera.position.x) * 0.05;
-    camera.position.y += (camY - camera.position.y) * 0.05;
-    camera.position.z += (camZ - camera.position.z) * 0.05;
+    camera.position.x += (camX - camera.position.x) * alphaCamera;
+    camera.position.y += (camY - camera.position.y) * alphaCamera;
+    camera.position.z += (camZ - camera.position.z) * alphaCamera;
     cameraTarget.set(0, scroll.progress * 1.2, 0);
     camera.lookAt(cameraTarget);
 

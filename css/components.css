@@ -14,6 +14,10 @@
 .stat-num{font-family:var(--font-display);font-weight:900;font-size:2.4rem;line-height:1;background:linear-gradient(135deg,var(--crimson),var(--violet-soft));-webkit-background-clip:text;background-clip:text;color:transparent}
 .stat-label{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
 .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.4rem}
+.project-card--featured{grid-column:span 2;padding:2rem 2.2rem;background:linear-gradient(135deg,rgba(40,18,64,.78) 0%,rgba(18,10,34,.66) 60%,rgba(30,8,20,.6) 100%);border-color:rgba(255,0,60,.4);box-shadow:0 25px 60px -8px rgba(0,0,0,.95),0 0 50px rgba(255,0,60,.18),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 6px rgba(0,0,0,.8)}
+.project-card--featured .card-title{font-size:1.6rem}
+.project-card--featured .card-desc{font-size:1.02rem}
+@media(max-width:760px){.project-card--featured{grid-column:span 1;padding:1.6rem}}
 .project-grid{perspective:1000px}
 .project-card{position:relative;padding:1.6rem;display:flex;flex-direction:column;gap:.9rem;transform-style:preserve-3d;transition:transform 200ms var(--ease),border-color 200ms var(--ease),box-shadow 200ms var(--ease);will-change:transform}
 .project-card::after{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;opacity:var(--glare,0);transition:opacity 200ms var(--ease);background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.28),rgba(255,0,60,.12) 25%,transparent 55%);mix-blend-mode:screen}
@@ -82,8 +86,14 @@
 .identity-card:hover{transform:translateY(-3px);border-color:var(--line-strong)}
 .identity-head{display:flex;align-items:center;gap:.9rem}
 .identity-sigil{display:grid;place-items:center;width:44px;height:44px;flex-shrink:0;border-radius:12px;font-size:1.5rem;line-height:1;background:linear-gradient(180deg,rgba(124,58,237,.3),rgba(76,29,149,.2));border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 4px 10px rgba(0,0,0,.5)}
-.identity-card--killerzero .identity-sigil{color:var(--crimson);text-shadow:0 0 14px rgba(255,0,60,.6)}
-.identity-card--gdacoff .identity-sigil{color:var(--violet-soft);text-shadow:0 0 14px rgba(139,92,246,.6)}
+.identity-card--killerzero{border-color:rgba(255,0,60,.35);background:linear-gradient(180deg,rgba(40,10,20,.72) 0%,rgba(18,6,14,.62) 100%);border-bottom:2px solid var(--crimson-deep);box-shadow:0 15px 35px -5px rgba(0,0,0,.9),0 0 30px rgba(255,0,60,.12),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 6px rgba(0,0,0,.8)}
+.identity-card--killerzero:hover{border-color:rgba(255,0,60,.6);box-shadow:0 20px 45px -6px rgba(0,0,0,.95),0 0 40px rgba(255,0,60,.28),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 6px rgba(0,0,0,.8)}
+.identity-card--killerzero .identity-sigil{color:var(--crimson);text-shadow:0 0 14px rgba(255,0,60,.6);background:linear-gradient(180deg,rgba(255,0,60,.22),rgba(120,0,30,.18));border-color:rgba(255,0,60,.4)}
+.identity-card--killerzero .identity-role{color:var(--crimson)}
+.identity-card--gdacoff{border-color:rgba(139,92,246,.35);background:linear-gradient(180deg,rgba(24,14,48,.72) 0%,rgba(14,8,28,.62) 100%);border-bottom:2px solid var(--violet-deep);box-shadow:0 15px 35px -5px rgba(0,0,0,.9),0 0 30px rgba(124,58,237,.14),inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 6px rgba(0,0,0,.8)}
+.identity-card--gdacoff:hover{border-color:rgba(139,92,246,.6);box-shadow:0 20px 45px -6px rgba(0,0,0,.95),0 0 40px rgba(124,58,237,.3),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 6px rgba(0,0,0,.8)}
+.identity-card--gdacoff .identity-sigil{color:var(--violet-soft);text-shadow:0 0 14px rgba(139,92,246,.6);background:linear-gradient(180deg,rgba(124,58,237,.28),rgba(76,29,149,.2));border-color:rgba(139,92,246,.4)}
+.identity-card--gdacoff .identity-role{color:var(--violet-soft)}
 .identity-titles{display:flex;flex-direction:column;gap:.15rem;min-width:0}
 .identity-name{font-family:var(--font-display);font-weight:800;font-size:1.25rem;margin:0;color:var(--ink);letter-spacing:.02em}
 .identity-role{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--violet-soft)}

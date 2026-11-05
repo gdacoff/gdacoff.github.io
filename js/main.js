@@ -65,8 +65,9 @@
   function renderProjects() {
     const grid = document.getElementById('project-grid');
     if (!grid) return;
-    grid.innerHTML = PROJECTS.map(function (p) {
-      return '<article class="project-card glass" data-tilt>' +
+    grid.innerHTML = PROJECTS.map(function (p, index) {
+      const featured = index === 0 ? ' project-card--featured' : '';
+      return '<article class="project-card glass reveal-card' + featured + '" data-tilt style="--i:' + index + '">' +
         '<div class="card-top"><h3 class="card-title">' + esc(p.title) + '</h3>' +
         '<span class="badge badge--' + p.status + '">' + esc(p.statusLabel) + '</span></div>' +
         '<span class="card-type">' + esc(p.type) + '</span>' +
@@ -80,8 +81,8 @@
   function renderPlatforms() {
     const grid = document.getElementById('platform-grid');
     if (!grid) return;
-    grid.innerHTML = PLATFORMS.map(function (p) {
-      return '<a class="platform-card glass" data-tilt href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer" style="--brand:' + esc(p.brand) + '">' +
+    grid.innerHTML = PLATFORMS.map(function (p, index) {
+      return '<a class="platform-card glass reveal-card" data-tilt href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer" style="--brand:' + esc(p.brand) + ';--i:' + index + '">' +
         '<span class="platform-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + esc(p.icon) + '" fill="currentColor"/></svg></span>' +
         '<span class="platform-meta"><span class="platform-name">' + esc(p.name) + '</span>' +
         '<span class="platform-desc">' + esc(p.desc) + '</span></span></a>';
@@ -91,9 +92,9 @@
   function renderTechnologies() {
     const grid = document.getElementById('tech-grid');
     if (!grid) return;
-    grid.innerHTML = TECHNOLOGIES.map(function (t) {
+    grid.innerHTML = TECHNOLOGIES.map(function (t, index) {
       const svg = TECH_SVGS[t.svg] || '';
-      return '<div class="tech-card glass" data-tilt>' +
+      return '<div class="tech-card glass reveal-card" data-tilt style="--i:' + index + '">' +
         '<span class="tech-logo" aria-hidden="true">' + svg + '</span>' +
         '<h3 class="tech-name">' + esc(t.name) + '</h3>' +
         '<span class="tech-cat-badge">' + esc(t.cat) + '</span>' +
@@ -124,32 +125,81 @@
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const cards = document.querySelectorAll('[data-tilt]');
     const MAX = 14;
+    const ALPHA = 0.16;
     cards.forEach(function (card) {
       let raf = 0;
       let lastX = 0, lastY = 0;
-      function apply() {
-        raf = 0;
-        const r = card.getBoundingClientRect();
-        const px = Math.min(1, Math.max(0, (lastX - r.left) / r.width));
-        const py = Math.min(1, Math.max(0, (lastY - r.top) / r.height));
-        const rx = (0.5 - py) * MAX;
-        const ry = (px - 0.5) * MAX;
-        card.style.transform = 'perspective(1000px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-4px) translateZ(8px)';
-        card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
-        card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
-        card.style.setProperty('--glare', (0.35 + 0.55 * (1 - Math.abs(px - 0.5) * 2) * (1 - Math.abs(py - 0.5) * 2)).toFixed(2));
+      let hovering = false;
+      const cur = { px: 0.5, py: 0.5, rx: 0, ry: 0, glare: 0 };
+      const tgt = { px: 0.5, py: 0.5, rx: 0, ry: 0, glare: 0 };
+      function tick() {
+        cur.px += (tgt.px - cur.px) * ALPHA;
+        cur.py += (tgt.py - cur.py) * ALPHA;
+        cur.rx += (tgt.rx - cur.rx) * ALPHA;
+        cur.ry += (tgt.ry - cur.ry) * ALPHA;
+        cur.glare += (tgt.glare - cur.glare) * ALPHA;
+        card.style.transform = 'perspective(1000px) rotateX(' + cur.rx.toFixed(2) + 'deg) rotateY(' + cur.ry.toFixed(2) + 'deg) translateY(' + (hovering ? -4 : 0) + 'px) translateZ(' + (hovering ? 8 : 0) + 'px)';
+        card.style.setProperty('--mx', (cur.px * 100).toFixed(1) + '%');
+        card.style.setProperty('--my', (cur.py * 100).toFixed(1) + '%');
+        card.style.setProperty('--glare', cur.glare.toFixed(2));
+        const settled = Math.abs(tgt.rx - cur.rx) < 0.02 && Math.abs(tgt.ry - cur.ry) < 0.02 &&
+          Math.abs(tgt.px - cur.px) < 0.001 && Math.abs(tgt.py - cur.py) < 0.001 &&
+          Math.abs(tgt.glare - cur.glare) < 0.005;
+        if (settled && !hovering) {
+          raf = 0;
+          card.style.transform = '';
+          card.style.setProperty('--glare', '0');
+          return;
+        }
+        raf = requestAnimationFrame(tick);
+      }
+      function ensure() {
+        if (!raf) raf = requestAnimationFrame(tick);
       }
       card.addEventListener('pointermove', function (e) {
+        hovering = true;
         lastX = e.clientX;
         lastY = e.clientY;
-        if (!raf) raf = requestAnimationFrame(apply);
+        const r = card.getBoundingClientRect();
+        tgt.px = Math.min(1, Math.max(0, (lastX - r.left) / r.width));
+        tgt.py = Math.min(1, Math.max(0, (lastY - r.top) / r.height));
+        tgt.rx = (0.5 - tgt.py) * MAX;
+        tgt.ry = (tgt.px - 0.5) * MAX;
+        tgt.glare = 0.35 + 0.55 * (1 - Math.abs(tgt.px - 0.5) * 2) * (1 - Math.abs(tgt.py - 0.5) * 2);
+        ensure();
       });
       card.addEventListener('pointerleave', function () {
-        if (raf) { cancelAnimationFrame(raf); raf = 0; }
-        card.style.transform = '';
-        card.style.setProperty('--glare', '0');
+        hovering = false;
+        tgt.px = 0.5;
+        tgt.py = 0.5;
+        tgt.rx = 0;
+        tgt.ry = 0;
+        tgt.glare = 0;
+        ensure();
       });
     });
+  }
+
+  function initReveal() {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const targets = document.querySelectorAll('.reveal-mask, .reveal-rule, .reveal-card, .section');
+    if (reduce || !('IntersectionObserver' in window)) {
+      targets.forEach(function (el) { el.classList.add('is-revealed'); });
+      return;
+    }
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    targets.forEach(function (el) { observer.observe(el); });
+    const hero = document.querySelectorAll('.hero .reveal-mask, .hero .reveal-rule');
+    setTimeout(function () {
+      hero.forEach(function (el) { el.classList.add('is-revealed'); });
+    }, 100);
   }
 
   function initNav() {
@@ -245,6 +295,7 @@
     renderPlatforms();
     renderTechnologies();
     initTyping();
+    initReveal();
     initTilt();
     initNav();
     initSound();
