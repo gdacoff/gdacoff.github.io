@@ -3,8 +3,8 @@
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;min-height:100vh;background:var(--obsidian);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;letter-spacing:.01em;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse 80% 60% at 20% 0%,rgba(124,58,237,.18),transparent 60%),radial-gradient(ellipse 70% 50% at 90% 20%,rgba(255,0,60,.1),transparent 55%),radial-gradient(ellipse 90% 70% at 50% 100%,rgba(76,29,149,.22),transparent 60%),var(--obsidian)}
-#geass-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;display:block}
-.vignette{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(6,3,11,.85) 100%)}
+#geass-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;display:block;image-rendering:auto}
+.vignette{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 75%,rgba(6,3,11,.55) 92%,rgba(6,3,11,.9) 100%)}
 .scanlines{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;background:repeating-linear-gradient(0deg,rgba(255,255,255,.5) 0,rgba(255,255,255,.5) 1px,transparent 1px,transparent 3px);mix-blend-mode:overlay}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
