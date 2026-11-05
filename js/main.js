@@ -12,6 +12,7 @@
   ];
 
   const PLATFORMS = [
+    { name: 'Discord', desc: 'Direct chat & community', url: 'https://discord.com/users/846024512611942401', brand: '#5865f2', icon: 'M20.3 4.4A19.8 19.8 0 0015.4 3l-.2.4a18.3 18.3 0 015.4 2.7 17.4 17.4 0 00-15.2 0A18.3 18.3 0 0110.8 3.4L10.6 3a19.8 19.8 0 00-4.9 1.4C2.6 9.1 1.8 13.7 2.2 18.2a19.9 19.9 0 006 3l1.2-2a12.8 12.8 0 01-2-1l.5-.4a14.2 14.2 0 0012.2 0l.5.4a12.8 12.8 0 01-2 1l1.2 2a19.9 19.9 0 006-3c.5-5.2-.8-9.8-3.5-13.8zM8.7 15.4c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.1 1.1 2.1 2.4-.9 2.4-2.1 2.4zm6.6 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.1 1.1 2.1 2.4-.9 2.4-2.1 2.4z' },
     { name: 'Modrinth', desc: 'Minecraft mods and updates', url: 'https://modrinth.com/user/gdacoff', brand: '#1bd96a', icon: 'M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14zm0 3a4 4 0 100 8 4 4 0 000-8z' },
     { name: 'CurseForge', desc: 'Mod releases and downloads', url: 'https://www.curseforge.com/members/gdacoff/projects', brand: '#f16436', icon: 'M4 4h16v16H4z M8 8h8v8H8z' },
     { name: 'GitHub', desc: 'Source code and repositories', url: 'https://github.com/gdacoff', brand: '#c9d1d9', icon: 'M12 2a10 10 0 00-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 015 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0012 2z' },
@@ -62,12 +63,12 @@
     }).join('');
   }
 
-  function renderArsenal() {
-    const grid = document.getElementById('arsenal-grid');
+  function renderTechnologies() {
+    const grid = document.getElementById('tech-grid');
     if (!grid) return;
     grid.innerHTML = ARSENAL.map(function (g) {
-      return '<div class="arsenal-cat glass"><h3>' + esc(g.cat) + '</h3><div class="arsenal-list">' +
-        g.items.map(function (i) { return '<span class="arsenal-badge">' + esc(i) + '</span>'; }).join('') +
+      return '<div class="tech-cat glass" data-tilt><h3 class="tech-cat-title">' + esc(g.cat) + '</h3><div class="tech-list">' +
+        g.items.map(function (i) { return '<span class="tech-chip">' + esc(i) + '</span>'; }).join('') +
         '</div></div>';
     }).join('');
   }
@@ -92,21 +93,33 @@
 
   function initTilt() {
     if (window.matchMedia('(pointer: coarse)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const cards = document.querySelectorAll('[data-tilt]');
-    const MAX = 8;
+    const MAX = 14;
     cards.forEach(function (card) {
-      card.addEventListener('pointermove', function (e) {
+      let raf = 0;
+      let lastX = 0, lastY = 0;
+      function apply() {
+        raf = 0;
         const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width;
-        const py = (e.clientY - r.top) / r.height;
+        const px = Math.min(1, Math.max(0, (lastX - r.left) / r.width));
+        const py = Math.min(1, Math.max(0, (lastY - r.top) / r.height));
         const rx = (0.5 - py) * MAX;
         const ry = (px - 0.5) * MAX;
-        card.style.transform = 'perspective(800px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-3px)';
+        card.style.transform = 'perspective(1000px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateY(-4px) translateZ(8px)';
         card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
         card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+        card.style.setProperty('--glare', (0.35 + 0.55 * (1 - Math.abs(px - 0.5) * 2) * (1 - Math.abs(py - 0.5) * 2)).toFixed(2));
+      }
+      card.addEventListener('pointermove', function (e) {
+        lastX = e.clientX;
+        lastY = e.clientY;
+        if (!raf) raf = requestAnimationFrame(apply);
       });
       card.addEventListener('pointerleave', function () {
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
         card.style.transform = '';
+        card.style.setProperty('--glare', '0');
       });
     });
   }
@@ -202,7 +215,7 @@
   function init() {
     renderProjects();
     renderPlatforms();
-    renderArsenal();
+    renderTechnologies();
     initTyping();
     initTilt();
     initNav();
