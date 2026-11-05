@@ -33,7 +33,7 @@
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x06030b, 0.038);
+    scene.fog = new THREE.FogExp2(0x0d071e, 0.02);
     camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
     camera.position.copy(cameraBase);
     clock = new THREE.Clock();
@@ -54,31 +54,31 @@
   }
 
   function buildLights() {
-    ambientLight = new THREE.AmbientLight(0x2a1a4a, 0.9);
+    ambientLight = new THREE.AmbientLight(0x4c2482, 1.4);
     scene.add(ambientLight);
-    cursorLight = new THREE.PointLight(CRIMSON, 3.5, 25, 2);
+    cursorLight = new THREE.PointLight(CRIMSON, 5.0, 35, 2);
     cursorLight.position.set(0, 0, 4);
     scene.add(cursorLight);
-    orbitLight = new THREE.PointLight(VIOLET, 3.0, 30, 2);
+    orbitLight = new THREE.PointLight(0xa855f7, 4.2, 35, 2);
     orbitLight.position.set(-6, 2, -6);
     scene.add(orbitLight);
-    rimLight = new THREE.DirectionalLight(0xff0055, 1.6);
+    rimLight = new THREE.DirectionalLight(0xff003c, 2.2);
     rimLight.position.set(6, 8, 4);
     scene.add(rimLight);
-    const fill = new THREE.DirectionalLight(0x7c3aed, 0.6);
-    fill.position.set(-4, -2, 6);
-    scene.add(fill);
+    const goldRim = new THREE.DirectionalLight(GOLD, 1.2);
+    goldRim.position.set(-5, -4, 5);
+    scene.add(goldRim);
   }
 
   function buildKing() {
     kingGroup = new THREE.Group();
     const obsidianMat = new THREE.MeshPhysicalMaterial({
-      color: OBSIDIAN, roughness: 0.15, metalness: 0.85,
-      clearcoat: 1.0, clearcoatRoughness: 0.08, reflectivity: 0.9, envMapIntensity: 1.0
+      color: OBSIDIAN, roughness: 0.12, metalness: 0.75,
+      clearcoat: 1.0, clearcoatRoughness: 0.06, reflectivity: 1.0, envMapIntensity: 1.2
     });
     const geassMat = new THREE.MeshStandardMaterial({
       color: 0x1a0a1f, roughness: 0.25, metalness: 0.6,
-      emissive: CRIMSON, emissiveIntensity: 0.8
+      emissive: CRIMSON, emissiveIntensity: 1.4
     });
     const base1 = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.15, 0.18, 8), obsidianMat);
     base1.position.y = -1.6; kingGroup.add(base1);
@@ -110,10 +110,16 @@
     coreGlow.position.y = 0.78; kingGroup.add(coreGlow);
     const coreHalo = new THREE.Mesh(
       new THREE.SphereGeometry(0.32, 20, 20),
-      new THREE.MeshBasicMaterial({ color: CRIMSON, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false })
+      new THREE.MeshBasicMaterial({ color: CRIMSON, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })
     );
     coreHalo.position.y = 0.78; kingGroup.add(coreHalo);
+    const coreHalo2 = new THREE.Mesh(
+      new THREE.SphereGeometry(0.55, 20, 20),
+      new THREE.MeshBasicMaterial({ color: CRIMSON, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    coreHalo2.position.y = 0.78; kingGroup.add(coreHalo2);
     kingGroup.userData.coreHalo = coreHalo;
+    kingGroup.userData.coreHalo2 = coreHalo2;
     kingGroup.position.set(0, 0.2, 0);
     scene.add(kingGroup);
   }
@@ -143,14 +149,14 @@
     extrudeGeo.center();
     const sigilMat = new THREE.MeshStandardMaterial({
       color: 0x1a0a1f, roughness: 0.3, metalness: 0.7,
-      emissive: CRIMSON, emissiveIntensity: 0.55
+      emissive: CRIMSON, emissiveIntensity: 1.2
     });
     const sigil = new THREE.Mesh(extrudeGeo, sigilMat);
     sigil.scale.setScalar(1.35);
     sigilGroup.add(sigil);
     const ringMat = new THREE.MeshStandardMaterial({
       color: 0x1a0a1f, roughness: 0.2, metalness: 0.9,
-      emissive: VIOLET, emissiveIntensity: 0.5
+      emissive: 0xa855f7, emissiveIntensity: 1.3
     });
     const ring1 = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.035, 8, 96), ringMat);
     ring1.rotation.x = Math.PI / 2.2;
@@ -171,12 +177,12 @@
     horizonBase = new Float32Array(horizonGeo.attributes.position.array.length);
     horizonBase.set(horizonGeo.attributes.position.array);
     const mat = new THREE.MeshStandardMaterial({
-      color: 0x1a0a2e, emissive: 0x4c1d95, emissiveIntensity: 0.35,
+      color: 0x2e1065, emissive: 0x7c3aed, emissiveIntensity: 0.85,
       roughness: 0.6, metalness: 0.4, wireframe: true,
-      transparent: true, opacity: 0.55, fog: true
+      transparent: true, opacity: 0.75, fog: true
     });
     horizon = new THREE.Mesh(horizonGeo, mat);
-    horizon.position.y = -4.5;
+    horizon.position.y = -3.2;
     scene.add(horizon);
   }
 
@@ -186,8 +192,8 @@
       color: OBSIDIAN, roughness: 0.2, metalness: 0.9,
       clearcoat: 0.8, clearcoatRoughness: 0.15
     });
-    const edgeMat = new THREE.LineBasicMaterial({ color: CRIMSON, transparent: true, opacity: 0.7 });
-    const edgeMatV = new THREE.LineBasicMaterial({ color: VIOLET, transparent: true, opacity: 0.55 });
+    const edgeMat = new THREE.LineBasicMaterial({ color: 0xff003c, transparent: true, opacity: 0.85 });
+    const edgeMatV = new THREE.LineBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.85 });
     const geos = [
       new THREE.DodecahedronGeometry(0.5),
       new THREE.IcosahedronGeometry(0.45),
@@ -201,10 +207,10 @@
       const mesh = new THREE.Mesh(geo, obsidianMat);
       const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), i % 3 === 0 ? edgeMatV : edgeMat);
       mesh.add(edges);
-      const radius = 5 + Math.random() * 9;
+      const radius = 4 + Math.random() * 10;
       const theta = Math.random() * Math.PI * 2;
-      const z = -15 + Math.random() * 20;
-      mesh.position.set(Math.cos(theta) * radius, -3 + Math.random() * 8, z);
+      const z = -18 + Math.random() * 20;
+      mesh.position.set(Math.cos(theta) * radius, -8 + Math.random() * 14, z);
       mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
       mesh.scale.setScalar(0.6 + Math.random() * 1.2);
       mesh.userData = {
@@ -236,25 +242,26 @@
   }
 
   function buildParticles() {
-    const count = isCoarse ? 700 : 1800;
+    const count = isCoarse ? 900 : 1900;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
-    const c1 = new THREE.Color(CRIMSON);
-    const c2 = new THREE.Color(VIOLET);
-    const c3 = new THREE.Color(GOLD);
+    const cCrimson = new THREE.Color(0xff003c);
+    const cViolet = new THREE.Color(0x8b5cf6);
+    const cVioletLight = new THREE.Color(0xc084fc);
+    const cGold = new THREE.Color(0xf59e0b);
+    const cGoldLight = new THREE.Color(0xfbbf24);
     const tmpColor = new THREE.Color();
     for (let i = 0; i < count; i++) {
-      const t = i / count;
-      const angle = t * Math.PI * 2 * 6 + Math.random() * 0.6;
-      const radius = 1.5 + Math.pow(t, 0.7) * 14;
-      const y = (Math.random() - 0.5) * 10 - 1;
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 2 + Math.random() * 18;
+      const y = (Math.random() - 0.5) * 16 - 1;
       positions[i * 3] = Math.cos(angle) * radius;
       positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = Math.sin(angle) * radius - 3;
+      positions[i * 3 + 2] = -25 + Math.random() * 30;
       const r = Math.random();
-      if (r < 0.5) tmpColor.copy(c1).lerp(c2, Math.random());
-      else if (r < 0.85) tmpColor.copy(c2).lerp(c3, Math.random());
-      else tmpColor.copy(c3);
+      if (r < 0.45) tmpColor.copy(cCrimson);
+      else if (r < 0.85) tmpColor.copy(Math.random() < 0.5 ? cViolet : cVioletLight);
+      else tmpColor.copy(Math.random() < 0.5 ? cGold : cGoldLight);
       colors[i * 3] = tmpColor.r;
       colors[i * 3 + 1] = tmpColor.g;
       colors[i * 3 + 2] = tmpColor.b;
@@ -264,11 +271,11 @@
     particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     particleBase = new Float32Array(positions);
     const mat = new THREE.PointsMaterial({
-      size: isCoarse ? 0.22 : 0.18,
+      size: isCoarse ? 0.32 : 0.28,
       map: makeGlowTexture(),
       vertexColors: true,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.95,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       sizeAttenuation: true
@@ -402,7 +409,7 @@
     orbitLight.position.z = Math.sin(t * 0.4) * 8 - 4;
     orbitLight.position.y = 2 + Math.sin(t * 0.6) * 1.5;
 
-    const baseOffsetX = window.innerWidth >= 992 ? 2.3 : 0;
+    const baseOffsetX = window.innerWidth >= 992 ? 2.2 : 0;
     if (kingGroup) {
       kingGroup.rotation.y = t * 0.25 + pointer.x * 0.4;
       kingGroup.position.y = (window.innerWidth >= 992 ? 0.2 : 0.35) + Math.sin(t * 0.8) * 0.08;
@@ -413,7 +420,12 @@
       const halo = kingGroup.userData.coreHalo;
       if (halo) {
         halo.scale.setScalar(1 + Math.sin(t * 2.2) * 0.3);
-        halo.material.opacity = 0.12 + Math.sin(t * 2.2) * 0.08;
+        halo.material.opacity = 0.5 + Math.sin(t * 2.2) * 0.25;
+      }
+      const halo2 = kingGroup.userData.coreHalo2;
+      if (halo2) {
+        halo2.scale.setScalar(1 + Math.sin(t * 1.6 + 1) * 0.35);
+        halo2.material.opacity = 0.28 + Math.sin(t * 1.6 + 1) * 0.15;
       }
       kingGroup.rotation.z = Math.sin(t * 0.5) * 0.03;
     }
@@ -450,16 +462,22 @@
 
     if (particleSystem) {
       particleSystem.rotation.y = t * 0.05;
+      particleSystem.position.y = Math.sin(t * 0.3) * 0.4 - scroll.progress * 2.5;
+      particleSystem.material.opacity = 0.85 + Math.sin(t * 1.4) * 0.1;
     }
 
     const camX = pointer.x * 0.8 + Math.sin(scroll.progress * Math.PI) * 1.5;
-    const camY = 0.4 + pointer.y * 0.4 + scroll.progress * 1.2;
-    const camZ = 9 - scroll.progress * 2.5;
+    const camY = 0.4 + pointer.y * 0.4 + scroll.progress * 2.4;
+    const camZ = 9 - scroll.progress * 3.2;
     camera.position.x += (camX - camera.position.x) * 0.05;
     camera.position.y += (camY - camera.position.y) * 0.05;
     camera.position.z += (camZ - camera.position.z) * 0.05;
-    cameraTarget.set(0, scroll.progress * 0.5, 0);
+    cameraTarget.set(0, scroll.progress * 1.2, 0);
     camera.lookAt(cameraTarget);
+
+    if (monoliths) {
+      monoliths.position.y = -scroll.progress * 3.5;
+    }
 
     updatePulses(dt);
     renderer.render(scene, camera);
