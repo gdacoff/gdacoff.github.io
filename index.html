@@ -95,14 +95,39 @@
         </div>
 
         <div class="hero-visual" aria-hidden="true">
-          <div class="hero-frame hero-frame--back">
-            <img src="https://github.com/user-attachments/assets/7ed636fa-6826-4bfb-b020-f5ef52e43456" alt="" loading="lazy" decoding="async" />
-          </div>
-          <div class="hero-frame hero-frame--front">
-            <img src="https://github.com/user-attachments/assets/4683a9a6-10af-441d-94b2-a0ea4a413a35" alt="" loading="lazy" decoding="async" />
-          </div>
-          <div class="hero-chess" aria-hidden="true">
-            <span class="chess-piece">♛</span>
+          <div class="hud-dossier">
+            <div class="hud-corner hud-corner--tl"></div>
+            <div class="hud-corner hud-corner--tr"></div>
+            <div class="hud-corner hud-corner--bl"></div>
+            <div class="hud-corner hud-corner--br"></div>
+            <div class="hud-scanline"></div>
+            <div class="hud-reticle">
+              <svg viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true">
+                <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,0,60,.35)" stroke-width="1" stroke-dasharray="4 6" />
+                <circle cx="100" cy="100" r="64" fill="none" stroke="rgba(139,92,246,.4)" stroke-width="1" />
+                <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(255,0,60,.55)" stroke-width="1.2" />
+                <path d="M100 4 V28 M100 172 V196 M4 100 H28 M172 100 H196" stroke="rgba(255,0,60,.7)" stroke-width="1.4" />
+                <path d="M100 100 L100 60 M100 100 L136 100" stroke="rgba(255,0,60,.5)" stroke-width="1" />
+                <circle cx="100" cy="100" r="3" fill="#ff003c" />
+              </svg>
+            </div>
+            <div class="hud-insignia">
+              <span class="hud-chess">♛</span>
+            </div>
+            <div class="hud-meta hud-meta--top">
+              <span class="hud-tag">ROYAL BRITANNIA</span>
+              <span class="hud-tag hud-tag--dim">DOSSIER // 00</span>
+            </div>
+            <div class="hud-meta hud-meta--bottom">
+              <span class="hud-coord">SEC-00 // ELEV: 104.2</span>
+              <span class="hud-status">SYS: ACTIVE // CLEARANCE: ROYAL</span>
+            </div>
+            <div class="hud-geass">
+              <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+                <path d="M60 8 L72 44 L108 60 L72 76 L60 112 L48 76 L12 60 L48 44 Z" fill="none" stroke="rgba(255,0,60,.55)" stroke-width="1.4" stroke-linejoin="round" />
+                <circle cx="60" cy="60" r="6" fill="rgba(255,0,60,.7)" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
@@ -119,19 +144,46 @@
         <span class="section-rule" aria-hidden="true"></span>
       </div>
       <div class="about-grid">
-        <div class="about-panel glass">
-          <p class="about-lead">
-            Developer passionate about <strong>unusual, original projects</strong>, high-performance game mods, and developer utilities.
-          </p>
-          <p>
-            Creator of advanced Minecraft server performance systems and horror game experiences. I build things that push engines to their limits — and then a little further.
-          </p>
-          <ul class="about-facts">
-            <li><span class="fact-key">Focus</span><span class="fact-val">JVM performance, modding, tooling</span></li>
-            <li><span class="fact-key">Stack</span><span class="fact-val">Java · Go · Rust · Python</span></li>
-            <li><span class="fact-key">Motto</span><span class="fact-val">All hail Lelouch!</span></li>
-          </ul>
+        <div class="about-identities">
+          <article class="identity-card glass identity-card--killerzero">
+            <header class="identity-head">
+              <span class="identity-sigil" aria-hidden="true">♚</span>
+              <div class="identity-titles">
+                <h3 class="identity-name">KillerZero_11</h3>
+                <span class="identity-role">JVM Performance &amp; Server Systems</span>
+              </div>
+            </header>
+            <p class="identity-desc">
+              Specialized brand for high-performance JVM server modding. Author of <strong>KilllTheFrizz</strong> — intelligent entity sleeping, AI throttling, and bytecode-level optimizations — plus automated search tooling (<strong>SearchGitKillerApp</strong>, <strong>SearchGitKiller</strong>).
+            </p>
+            <ul class="identity-tags">
+              <li>KilllTheFrizz</li>
+              <li>SearchGitKillerApp</li>
+              <li>SearchGitKiller</li>
+              <li>Bytecode Opt</li>
+            </ul>
+          </article>
+          <article class="identity-card glass identity-card--gdacoff">
+            <header class="identity-head">
+              <span class="identity-sigil" aria-hidden="true">♜</span>
+              <div class="identity-titles">
+                <h3 class="identity-name">gdacoff</h3>
+                <span class="identity-role">Core Developer &amp; Multi-Language Systems</span>
+              </div>
+            </header>
+            <p class="identity-desc">
+              Core developer identity behind Minecraft modding commissions and horror experiences (<strong>LucasMod</strong>, <strong>x1.5.9_delta</strong>, <strong>alpha_deprecated</strong>), multi-language systems across Java, Go, Rust, and Python, and platform releases.
+            </p>
+            <ul class="identity-tags">
+              <li>LucasMod</li>
+              <li>x1.5.9_delta</li>
+              <li>alpha_deprecated</li>
+              <li>Java · Go · Rust · Python</li>
+            </ul>
+          </article>
+          <p class="about-motto">All hail Lelouch!</p>
         </div>
+        <!-- legacy about panel removed -->
         <div class="about-stats">
           <div class="stat-card glass">
             <span class="stat-num">6</span>

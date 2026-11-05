@@ -1,8 +1,7 @@
 /* Geass volumetric scene. */
 (function () {
   'use strict';
-  const canvas = document.getElementById('geass-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
+  let canvas;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isCoarse = window.matchMedia('(pointer: coarse)').matches;
   const CRIMSON = 0xff003c, VIOLET = 0x8b5cf6, GOLD = 0xf59e0b, OBSIDIAN = 0x0a0614;
@@ -19,6 +18,11 @@
   const cameraTarget = new THREE.Vector3(0, 0, 0);
 
   function init() {
+    canvas = document.getElementById('geass-canvas');
+    if (!canvas || typeof THREE === 'undefined') {
+      window.addEventListener('load', init, { once: true });
+      return;
+    }
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(window.innerWidth, window.innerHeight, false);
@@ -398,10 +402,11 @@
     orbitLight.position.z = Math.sin(t * 0.4) * 8 - 4;
     orbitLight.position.y = 2 + Math.sin(t * 0.6) * 1.5;
 
+    const baseOffsetX = window.innerWidth >= 992 ? 2.3 : 0;
     if (kingGroup) {
       kingGroup.rotation.y = t * 0.25 + pointer.x * 0.4;
-      kingGroup.position.y = 0.2 + Math.sin(t * 0.8) * 0.08;
-      kingGroup.position.x = pointer.x * 0.3;
+      kingGroup.position.y = (window.innerWidth >= 992 ? 0.2 : 0.35) + Math.sin(t * 0.8) * 0.08;
+      kingGroup.position.x = baseOffsetX + pointer.x * 0.3;
       const pulse = 0.8 + Math.sin(t * 2.2) * 0.35;
       coreGlow.material.opacity = 0.7 + Math.sin(t * 2.2) * 0.25;
       coreGlow.scale.setScalar(1 + Math.sin(t * 2.2) * 0.15);
@@ -414,6 +419,7 @@
     }
 
     if (sigilGroup) {
+      sigilGroup.position.x = baseOffsetX;
       sigilGroup.rotation.z = t * 0.15;
       sigilGroup.userData.ring1.rotation.z = t * 0.4;
       sigilGroup.userData.ring2.rotation.z = -t * 0.3;
@@ -459,5 +465,9 @@
     renderer.render(scene, camera);
   }
 
-  init();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
