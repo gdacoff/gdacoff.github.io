@@ -487,22 +487,45 @@
     var seal = new THREE.Group();
 
     function bladeRingGeo() {
-      var N = 14, R0 = 1.95, R1 = 2.6, RIN = 1.5, step = Math.PI * 2 / N;
       var sh = new THREE.Shape();
-      for (var i = 0; i < N; i++) {
-        var a = i * step;
-        var vx = Math.cos(a) * R0, vy = Math.sin(a) * R0;
-        var tx = Math.cos(a + step * 0.78) * R1, ty = Math.sin(a + step * 0.78) * R1;
-        if (i === 0) sh.moveTo(vx, vy); else sh.lineTo(vx, vy);
-        sh.lineTo(tx, ty);
-      }
+
+      sh.moveTo(0, -1.78);
+      sh.lineTo(0.76, -1.02);
+      sh.quadraticCurveTo(0.90, -0.88, 0.84, -0.68);
+      sh.lineTo(0.64, -0.04);
+      sh.quadraticCurveTo(0.60, 0.10, 0.74, 0.16);
+      sh.bezierCurveTo(1.45, 0.40, 2.22, 0.85, 2.85, 1.72);
+      sh.bezierCurveTo(2.05, 1.12, 1.25, 0.72, 0.44, 0.34);
+      sh.quadraticCurveTo(0.32, 0.28, 0.36, 0.12);
+      sh.lineTo(0.54, -0.54);
+      sh.quadraticCurveTo(0.58, -0.68, 0.46, -0.78);
+      sh.lineTo(0, -1.20);
+
+      sh.lineTo(-0.46, -0.78);
+      sh.quadraticCurveTo(-0.58, -0.68, -0.54, -0.54);
+      sh.lineTo(-0.36, 0.12);
+      sh.quadraticCurveTo(-0.32, 0.28, -0.44, 0.34);
+      sh.bezierCurveTo(-1.25, 0.72, -2.05, 1.12, -2.85, 1.72);
+      sh.bezierCurveTo(-2.22, 0.85, -1.45, 0.40, -0.74, 0.16);
+      sh.quadraticCurveTo(-0.60, 0.10, -0.64, -0.04);
+      sh.lineTo(-0.84, -0.68);
+      sh.quadraticCurveTo(-0.90, -0.88, -0.76, -1.02);
       sh.closePath();
-      var hole = new THREE.Path(); hole.absarc(0, 0, RIN, 0, Math.PI * 2, true); sh.holes.push(hole);
-      var g = new THREE.ExtrudeGeometry(sh, { depth: 0.22, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.07, bevelSegments: 4, curveSegments: 96 });
+
+      var g = new THREE.ExtrudeGeometry(sh, {
+        depth: 0.22,
+        bevelEnabled: true,
+        bevelThickness: 0.06,
+        bevelSize: 0.035,
+        bevelSegments: 4,
+        curveSegments: 64
+      });
       g.center();
+      g.translate(0, 0, -0.35);
       return g;
     }
     var ring = new THREE.Mesh(bladeRingGeo(), lacquerMat);
+    Object.defineProperty(ring.rotation, 'z', { get: function () { return 0; }, set: function () {} });
     seal.add(ring);
 
     var lining = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.055, 18, 140), chromeMat);
