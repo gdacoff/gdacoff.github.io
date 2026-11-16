@@ -1,245 +1,706 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="KillerZero (gdacoff) — Java developer, Minecraft mod creator, and builder of high-performance server systems. All hail Lelouch." />
-  <meta name="theme-color" content="#06030b" />
-  <title>KILLERZERO // gdacoff — Java Developer & Mod Creator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Syne:wght@700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/base.css?v=3.4" />
-  <link rel="stylesheet" href="css/components.css?v=3.4" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e0408">
+<meta name="description" content="KillerZero (gdacoff): Java developer, Minecraft mod creator and builder of high-performance server systems.">
+<title>KillerZero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&display=swap">
+<style>
+  /* Layout: one fixed WebGL scene (a crimson-and-chrome royal seal) behind an editorial scroll.
+     Giant condensed type, hairline-ruled lists instead of cards, small glass pills for actions. */
+  :root {
+    --ink: #0e0408;
+    --ink-soft: #1a0810;
+    --wine: #3a0b19;
+    --blood: #e11231;
+    --chrome: #dfe2ea;
+    --bone: #f1e9e4;
+    --smoke: #b3a5ab;
+    --line: rgba(241, 233, 228, 0.16);
+    --display: "Bricolage Grotesque", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --text: "Newsreader", Georgia, "Times New Roman", serif;
+    --gutter-l: max(20px, env(safe-area-inset-left, 0px));
+    --gutter-r: max(20px, env(safe-area-inset-right, 0px));
+    --s-beta: #e6b34a;
+    --s-dev: #7db4ff;
+    --s-done: #55c98f;
+    --s-hold: #9a8f94;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--bone);
+    font: 400 1.125rem/1.62 var(--text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+    background: var(--ink); z-index: 40;
+  }
+
+  ::selection { background: var(--blood); color: #fff; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--chrome); outline-offset: 4px; border-radius: 6px; }
+
+  /* ---------- Scene ---------- */
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
+  .vignette {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 70% at 50% 46%, transparent 40%, rgba(14, 4, 8, 0.7) 100%),
+      linear-gradient(180deg, rgba(14, 4, 8, 0.55), transparent 18%, transparent 80%, rgba(14, 4, 8, 0.7));
+  }
+  #fallback {
+    position: fixed; inset: 0; z-index: 0; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 60% 40%, #3a0b19 0%, var(--ink) 62%);
+  }
+  #fallback[hidden] { display: none; }
+  .orb {
+    width: min(60vmin, 480px); aspect-ratio: 1; border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.85), transparent 38%),
+      conic-gradient(from 200deg, #e11231, #4a0612, #e11231, #ffb3bd, #e11231);
+    box-shadow: 0 0 120px 20px rgba(225, 18, 49, 0.3), inset 0 0 80px rgba(0, 0, 0, 0.5);
+    animation: orbSpin 40s linear infinite;
+  }
+  @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+  main { position: relative; z-index: 2; }
+  .wrap { width: 100%; max-width: 1280px; margin-inline: auto; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: fixed; z-index: 30; left: 0; right: 0;
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    padding-left: var(--gutter-l); padding-right: var(--gutter-r);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    pointer-events: none;
+  }
+  .nav > * { pointer-events: auto; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font: 700 1.05rem/1 var(--display); letter-spacing: 0.01em; }
+  .brand svg { width: 30px; height: 30px; flex: none; }
+  .nav-links { display: flex; gap: 4px; padding: 5px; border-radius: 999px; }
+  .nav-links a { padding: 9px 16px; border-radius: 999px; font: 500 0.92rem/1 var(--display); color: var(--smoke); transition: color 0.2s, background-color 0.2s; }
+  .nav-links a:hover, .nav-links a:focus-visible { color: var(--bone); background: rgba(255, 255, 255, 0.09); }
+  .menu-btn { display: none; }
+
+  .glass {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.045));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 14px 34px -16px rgba(0, 0, 0, 0.9);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .glass { -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%); }
+  }
+
+  .pill {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 15px 26px; border-radius: 999px; cursor: pointer;
+    font: 600 0.98rem/1 var(--display); color: var(--bone); border: 0;
+    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1), box-shadow 0.25s, filter 0.25s;
+  }
+  .pill:hover { transform: translateY(-2px); }
+  .pill:active { transform: translateY(0); }
+  .pill.solid {
+    background: linear-gradient(180deg, #ffffff, #c9ced9); color: #1a0a10;
+    box-shadow: 0 14px 34px -12px rgba(225, 18, 49, 0.55), inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+  }
+  .pill.solid:hover { box-shadow: 0 18px 40px -10px rgba(225, 18, 49, 0.75), inset 0 -2px 0 rgba(0, 0, 0, 0.12); }
+
+  .sheet {
+    position: fixed; inset: 0; z-index: 35; background: rgba(14, 4, 8, 0.97);
+    padding: calc(env(safe-area-inset-top, 0px) + 84px) var(--gutter-r) 40px var(--gutter-l);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .sheet a { font: 700 clamp(2.2rem, 11vw, 3.4rem)/1.1 var(--display); font-stretch: 75%; padding: 6px 0; border-bottom: 1px solid var(--line); }
+
+  /* ---------- Hero ---------- */
+  .hero { min-height: 100vh; min-height: 100svh; display: flex; align-items: flex-end; padding-block: 120px 36px; }
+  .hero-in { display: flex; flex-direction: column; gap: clamp(20px, 3vw, 36px); }
+  .hero-top { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+  .lede { margin: 0; max-width: 31ch; font-size: clamp(1.15rem, 1.7vw, 1.45rem); line-height: 1.45; color: var(--bone); }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .title {
+    margin: 0; font: 800 12vw/0.82 var(--display); font-stretch: 75%; letter-spacing: -0.035em;
+    white-space: nowrap; width: max-content; max-width: none; color: var(--bone); text-shadow: 0 6px 40px rgba(0, 0, 0, 0.55);
+  }
+  .title .ch { display: inline-block; }
+  @media (prefers-reduced-motion: no-preference) {
+    .title.go .ch { animation: chIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(var(--i) * 45ms); }
+    @keyframes chIn { from { transform: translateY(70%); opacity: 0; filter: blur(8px); } to { transform: none; opacity: 1; filter: none; } }
+  }
+
+  /* ---------- Sections ---------- */
+  .sec { position: relative; padding-block: clamp(96px, 16vh, 180px); }
+  .sec.scrim::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(14, 4, 8, 0.62) 14%, rgba(14, 4, 8, 0.62) 86%, transparent);
+  }
+  h2 {
+    margin: 0 0 24px; font: 800 clamp(2.5rem, 6.4vw, 5.6rem)/0.92 var(--display); font-stretch: 75%;
+    letter-spacing: -0.025em; text-wrap: balance;
+  }
+  .sub { margin: 0; max-width: 46ch; color: var(--smoke); font-size: 1.2rem; }
+
+  /* About: text on the right, the seal sits on the left */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .about-body { grid-column: 2; display: flex; flex-direction: column; gap: 44px; }
+  .id h3 { margin: 0 0 8px; font: 700 1.7rem/1.1 var(--display); letter-spacing: -0.01em; }
+  .id p { margin: 0; max-width: 52ch; color: var(--smoke); }
+  .id { padding-top: 22px; border-top: 1px solid var(--line); }
+  .tally { margin: 0; font-size: 1.25rem; color: var(--bone); max-width: 40ch; }
+
+  /* Projects: a ruled index, not cards */
+  .index { list-style: none; margin: 56px 0 0; padding: 0; border-bottom: 1px solid var(--line); }
+  .row {
+    position: relative; display: grid; grid-template-columns: 1.15fr 1.25fr 0.9fr; gap: 20px 40px;
+    padding: 30px 0; border-top: 1px solid var(--line); transition: background-color 0.3s;
+  }
+  .row:hover { background: rgba(255, 255, 255, 0.035); }
+  .row h3 { margin: 0 0 10px; font: 700 clamp(1.7rem, 3vw, 2.5rem)/1 var(--display); letter-spacing: -0.02em; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.3, 1); }
+  .row:hover h3 { transform: translateX(8px); }
+  .row h3 a::after { content: ""; position: absolute; inset: 0; }
+  .kind { font: 500 0.95rem/1 var(--display); color: var(--smoke); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .state { display: inline-flex; align-items: center; gap: 8px; color: var(--bone); }
+  .state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); }
+  .row p { margin: 0; color: var(--smoke); }
+  .side { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+  .tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+  .tags li { padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; font: 500 0.85rem/1.2 var(--display); color: var(--bone); }
+  .open { font: 600 0.95rem/1 var(--display); color: var(--bone); border-bottom: 1px solid var(--blood); padding-bottom: 4px; }
+
+  /* Platforms */
+  .platforms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; margin-top: 52px; max-width: 880px; }
+  .plat { display: flex; gap: 18px; align-items: center; padding: 22px 0; border-top: 1px solid var(--line); transition: padding-left 0.3s cubic-bezier(0.2, 0.7, 0.3, 1); }
+  .plat:hover { padding-left: 10px; }
+  .plat svg { width: 28px; height: 28px; flex: none; color: var(--smoke); transition: color 0.25s; }
+  .plat:hover svg, .plat:focus-visible svg { color: var(--brand); }
+  .plat b { display: block; font: 700 1.3rem/1.15 var(--display); }
+  .plat small { display: block; color: var(--smoke); font-size: 1rem; line-height: 1.35; }
+
+  /* Technologies */
+  .tech-body { margin-left: auto; max-width: 820px; }
+  .toolbox { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; margin-top: 52px; }
+  .toolbox h3 { margin: 0 0 14px; font: 500 1rem/1 var(--display); color: var(--smoke); padding-top: 18px; border-top: 1px solid var(--line); }
+  .toolbox ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .toolbox li { font: 700 clamp(1.5rem, 2.6vw, 2.2rem)/1.15 var(--display); letter-spacing: -0.015em; }
+
+  /* Contact */
+  .contact { min-height: 100vh; min-height: 100svh; display: flex; align-items: flex-end; padding-block: 120px 56px; }
+  .contact h2 { font-size: clamp(2.8rem, 8vw, 7.4rem); max-width: 12ch; }
+  .contact .cta { margin-top: 32px; }
+  footer { position: relative; z-index: 2; padding: 22px var(--gutter-r) calc(28px + env(safe-area-inset-bottom, 0px)) var(--gutter-l); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; border-top: 1px solid var(--line); color: var(--smoke); font-size: 0.95rem; background: rgba(14, 4, 8, 0.8); }
+  footer a { border-bottom: 1px solid var(--line); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px) {
+    .row { grid-template-columns: 1fr 1fr; }
+    .row .side { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    .about-grid { grid-template-columns: 1fr; }
+    .about-body { grid-column: 1; }
+  }
+  @media (max-width: 760px) {
+    .nav-links { display: none; }
+    .menu-btn { display: inline-flex; padding: 11px 20px; font: 600 0.92rem/1 var(--display); color: var(--bone); border-radius: 999px; cursor: pointer; }
+    .hero { padding-block: 100px 28px; }
+    .sec.scrim::before { background: rgba(14, 4, 8, 0.74); }
+    .row { grid-template-columns: 1fr; padding: 26px 0; }
+    .platforms { grid-template-columns: 1fr; }
+    .toolbox { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+    .pill { padding: 15px 22px; }
+    .cta .pill { flex: 1 1 auto; }
+    .lede { font-size: 1.15rem; }
+  }
+</style>
 </head>
-<footer>
-  <p>gdacoff — Java developer & Minecraft mod creator.
-  <a href="https://github.com/gdacoff">GitHub: gdacoff</a></p>
-</footer>
 <body>
-  <canvas id="geass-canvas" aria-hidden="true"></canvas>
-  <div class="vignette" aria-hidden="true"></div>
-  <div class="scanlines" aria-hidden="true"></div>
 
-  <header class="site-header" id="site-header">
-    <a class="brand" href="#hero" aria-label="KillerZero home">
-      <span class="brand-sigil" aria-hidden="true">
-        <svg viewBox="0 0 48 48" width="34" height="34" role="img" aria-label="Geass sigil">
-          <defs>
-            <radialGradient id="sigilGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ff003c" stop-opacity="0.95" />
-              <stop offset="70%" stop-color="#7c3aed" stop-opacity="0.35" />
-              <stop offset="100%" stop-color="#7c3aed" stop-opacity="0" />
-            </radialGradient>
-          </defs>
-          <circle cx="24" cy="24" r="22" fill="url(#sigilGlow)" />
-          <path d="M24 8 L30 20 L42 24 L30 28 L24 40 L18 28 L6 24 L18 20 Z" fill="none" stroke="#ff003c" stroke-width="1.6" stroke-linejoin="round" />
-          <circle cx="24" cy="24" r="4.5" fill="#ff003c" />
-          <circle cx="24" cy="24" r="2" fill="#06030b" />
-        </svg>
-      </span>
-      <span class="brand-text">
-        <span class="brand-name">KILLERZERO</span>
-        <span class="brand-handle">// gdacoff</span>
-      </span>
-    </a>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div id="fallback" hidden aria-hidden="true"><div class="orb"></div></div>
 
-    <nav class="nav" id="primary-nav" aria-label="Primary">
-      <a href="#about">About</a>
-      <a href="#projects">Projects</a>
-      <a href="#platforms">Platforms</a>
-      <a href="#technologies">Technologies</a>
-    </nav>
+<header class="nav">
+  <a class="brand glass-less" href="#hero" aria-label="KillerZero, back to top">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="14.2" fill="none" stroke="#e11231" stroke-width="1.6"/>
+      <circle cx="16" cy="16" r="10.6" fill="none" stroke="#dfe2ea" stroke-width="1"/>
+      <path d="M9.5 20.5 8.6 11.6l4 3.2 3.4-5.2 3.4 5.2 4-3.2-.9 8.9z" fill="#dfe2ea"/>
+      <circle cx="16" cy="17" r="1.5" fill="#e11231"/>
+    </svg>
+    <span>gdacoff</span>
+  </a>
+  <nav class="nav-links glass" aria-label="Sections">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#tech">Toolbox</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button class="menu-btn glass" id="menuBtn" type="button" aria-expanded="false" aria-controls="sheet">Menu</button>
+</header>
 
-    <div class="header-controls">
-      <span class="status-pill" title="System status">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span class="status-label">GEASS ONLINE</span>
-      </span>
-      <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Toggle ambient sound">
-        <svg class="icon-sound-off" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <svg class="icon-sound-on" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8a5 5 0 010 8M18.5 5.5a9 9 0 010 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
-        <span class="sound-label">Sound OFF</span>
-      </button>
-      <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation menu">
-        <span></span><span></span><span></span>
-      </button>
+<div class="sheet" id="sheet" hidden>
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#platforms">Platforms</a>
+  <a href="#tech">Toolbox</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<main>
+  <section class="hero" id="hero" data-scene>
+    <div class="wrap hero-in">
+      <div class="hero-top">
+        <p class="lede">I make Minecraft servers stop stuttering. Mods, tools and the occasional haunted world, written in Java, Rust and Go.</p>
+        <div class="cta">
+          <a class="pill solid" href="#projects">See the projects</a>
+          <a class="pill glass" href="#contact">Message me</a>
+        </div>
+      </div>
+      <h1 class="title" id="title" aria-label="KillerZero">KILLERZERO</h1>
     </div>
-  </header>
+  </section>
 
-  <main>
-    <section class="hero" id="hero">
-      <div class="hero-inner">
-        <div class="hero-copy">
-          <p class="eyebrow">
-            <span class="eyebrow-line" aria-hidden="true"></span>
-            [ ROYAL BRITANNIA // CLASSIFIED DOSSIER 00 ]
-          </p>
-          <h1 class="hero-title">
-            <span class="reveal-mask"><span class="hero-title-main">KILLERZERO</span></span>
-            <span class="reveal-mask"><span class="hero-title-sub">// gdacoff</span></span>
-          </h1>
-          <p class="hero-typing" aria-live="polite">
-            <span id="typing-target"></span><span class="caret" aria-hidden="true">_</span>
-          </p>
-          <blockquote class="hero-quote">
-            <p>“The only ones who should kill, are those who are prepared to be killed.”</p>
-            <cite>— Lelouch vi Britannia</cite>
-          </blockquote>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#projects">
-              <span>Explore Projects</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-            <a class="btn btn-ghost" href="#platforms">
-              <span>Direct Command</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6l8 6 8-6M4 6v12h16V6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-          </div>
+  <section class="sec scrim" id="about" data-scene>
+    <div class="wrap about-grid">
+      <div class="about-body">
+        <h2>One developer, two handles.</h2>
+        <div class="id">
+          <h3>KillerZero_11</h3>
+          <p>The speed side. I read bytecode, find what a server wastes its time on and make it stop. KilllTheFrizz puts idle entities to sleep and throttles villager AI so big worlds keep their tick rate.</p>
         </div>
-
-        <div class="hero-visual" aria-hidden="true">
-          <div class="hud-dossier">
-            <div class="hud-corner hud-corner--tl"></div>
-            <div class="hud-corner hud-corner--tr"></div>
-            <div class="hud-corner hud-corner--bl"></div>
-            <div class="hud-corner hud-corner--br"></div>
-            <div class="hud-scanline"></div>
-            <div class="hud-reticle">
-              <svg viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true">
-                <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,0,60,.35)" stroke-width="1" stroke-dasharray="4 6" />
-                <circle cx="100" cy="100" r="64" fill="none" stroke="rgba(139,92,246,.4)" stroke-width="1" />
-                <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(255,0,60,.55)" stroke-width="1.2" />
-                <path d="M100 4 V28 M100 172 V196 M4 100 H28 M172 100 H196" stroke="rgba(255,0,60,.7)" stroke-width="1.4" />
-                <path d="M100 100 L100 60 M100 100 L136 100" stroke="rgba(255,0,60,.5)" stroke-width="1" />
-                <circle cx="100" cy="100" r="3" fill="#ff003c" />
-              </svg>
-            </div>
-            <div class="hud-insignia">
-              <span class="hud-chess">♛</span>
-            </div>
-            <div class="hud-meta hud-meta--top">
-              <span class="hud-tag">ROYAL BRITANNIA</span>
-              <span class="hud-tag hud-tag--dim">DOSSIER // 00</span>
-            </div>
-            <div class="hud-meta hud-meta--bottom">
-              <span class="hud-coord">SEC-00 // ELEV: 104.2</span>
-              <span class="hud-status">SYS: ACTIVE // CLEARANCE: ROYAL</span>
-            </div>
-            <div class="hud-geass">
-              <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
-                <path d="M60 8 L72 44 L108 60 L72 76 L60 112 L48 76 L12 60 L48 44 Z" fill="none" stroke="rgba(255,0,60,.55)" stroke-width="1.4" stroke-linejoin="round" />
-                <circle cx="60" cy="60" r="6" fill="rgba(255,0,60,.7)" />
-              </svg>
-            </div>
-          </div>
+        <div class="id">
+          <h3>gdacoff</h3>
+          <p>The studio side. Commissioned mods, horror experiments and the tools that sit between them, in Java, Go, Rust and Python.</p>
         </div>
+        <p class="tally">Six projects in motion, nine places to find them, and a list of ideas that keeps growing.</p>
       </div>
-      <a class="scroll-cue" href="#about" aria-label="Scroll to about section">
-        <span class="scroll-cue-line" aria-hidden="true"></span>
-        <span>SCROLL</span>
-      </a>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="about">
-      <div class="section-head">
-        <span class="section-index">01</span>
-        <h2 class="section-title"><span class="reveal-mask"><span>About</span></span></h2>
-        <span class="section-rule reveal-rule" aria-hidden="true"></span>
+  <section class="sec scrim" id="projects" data-scene>
+    <div class="wrap">
+      <h2>Mods, tools and a few experiments.</h2>
+      <p class="sub">Everything here is on GitHub. Pick a row to read the code.</p>
+      <ul class="index" id="index"></ul>
+    </div>
+  </section>
+
+  <section class="sec scrim" id="platforms" data-scene>
+    <div class="wrap">
+      <h2>Find me where you already hang out.</h2>
+      <p class="sub">Releases on Modrinth and CurseForge, plugins on SpigotMC and BuiltByBit, dev logs and showcases on YouTube and TikTok.</p>
+      <div class="platforms" id="platformList"></div>
+    </div>
+  </section>
+
+  <section class="sec scrim" id="tech" data-scene>
+    <div class="wrap">
+      <div class="tech-body">
+        <h2>The toolbox.</h2>
+        <p class="sub">Five languages, three mod loaders and the usual tooling.</p>
+        <div class="toolbox" id="toolbox"></div>
       </div>
-      <div class="about-grid">
-        <div class="about-identities">
-          <article class="identity-card glass identity-card--killerzero reveal-card">
-            <header class="identity-head">
-              <span class="identity-sigil" aria-hidden="true">♚</span>
-              <div class="identity-titles">
-                <h3 class="identity-name">KillerZero_11</h3>
-                <span class="identity-role">[ JVM RUNTIME ARCHITECT ]</span>
-              </div>
-            </header>
-            <p class="identity-desc">
-              Specialized brand for high-performance JVM server modding. Author of <strong>KilllTheFrizz</strong> — intelligent entity sleeping, AI throttling, and bytecode-level optimizations — plus automated search tooling (<strong>SearchGitKillerApp</strong>, <strong>SearchGitKiller</strong>).
-            </p>
-            <ul class="identity-tags">
-              <li>KilllTheFrizz</li>
-              <li>SearchGitKillerApp</li>
-              <li>SearchGitKiller</li>
-              <li>Bytecode Opt</li>
-            </ul>
-          </article>
-          <article class="identity-card glass identity-card--gdacoff reveal-card">
-            <header class="identity-head">
-              <span class="identity-sigil" aria-hidden="true">♜</span>
-              <div class="identity-titles">
-                <h3 class="identity-name">gdacoff</h3>
-                <span class="identity-role">[ MULTI-LANGUAGE CORE ]</span>
-              </div>
-            </header>
-            <p class="identity-desc">
-              Core developer identity behind Minecraft modding commissions and horror experiences (<strong>LucasMod</strong>, <strong>x1.5.9_delta</strong>, <strong>alpha_deprecated</strong>), multi-language systems across Java, Go, Rust, and Python, and platform releases.
-            </p>
-            <ul class="identity-tags">
-              <li>LucasMod</li>
-              <li>x1.5.9_delta</li>
-              <li>alpha_deprecated</li>
-              <li>Java · Go · Rust · Python</li>
-            </ul>
-          </article>
-          <p class="about-motto">All hail Lelouch!</p>
-        </div>
-        <!-- legacy about panel removed -->
-        <div class="about-stats">
-          <div class="stat-card glass reveal-card">
-            <span class="stat-num">6</span>
-            <span class="stat-label">Active Projects</span>
-          </div>
-          <div class="stat-card glass reveal-card">
-            <span class="stat-num">9</span>
-            <span class="stat-label">Platforms</span>
-          </div>
-          <div class="stat-card glass">
-            <span class="stat-num">∞</span>
-            <span class="stat-label">Ideas in Queue</span>
-          </div>
-        </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" data-scene>
+    <div class="wrap">
+      <h2>Got a server that stutters or a world that needs building?</h2>
+      <p class="sub">Tell me what you have and what is going wrong. I take commissions for Minecraft mods and plugins.</p>
+      <div class="cta">
+        <a class="pill solid" href="https://t.me/gdacoff" target="_blank" rel="noopener noreferrer">Message on Telegram</a>
+        <a class="pill glass" href="https://discord.com/users/846024512611942401" target="_blank" rel="noopener noreferrer">Add on Discord</a>
       </div>
-    </section>
+    </div>
+  </section>
+</main>
 
-    <section class="section" id="projects">
-      <div class="section-head">
-        <span class="section-index">02</span>
-        <h2 class="section-title"><span class="reveal-mask"><span>Projects</span></span></h2>
-        <span class="section-rule reveal-rule" aria-hidden="true"></span>
-      </div>
-      <div class="project-grid" id="project-grid"></div>
-    </section>
+<footer>
+  <span>KillerZero (gdacoff). Java developer and Minecraft mod creator.</span>
+  <a href="https://github.com/gdacoff" target="_blank" rel="noopener noreferrer">github.com/gdacoff</a>
+</footer>
 
-    <section class="section" id="platforms">
-      <div class="section-head">
-        <span class="section-index">03</span>
-        <h2 class="section-title"><span class="reveal-mask"><span>Platforms</span></span></h2>
-        <span class="section-rule reveal-rule" aria-hidden="true"></span>
-      </div>
-      <div class="platform-grid" id="platform-grid"></div>
-    </section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  'use strict';
 
-    <section class="section" id="technologies">
-      <div class="section-head">
-        <span class="section-index">04</span>
-        <h2 class="section-title"><span class="reveal-mask"><span>Technologies</span></span></h2>
-        <span class="section-rule reveal-rule" aria-hidden="true"></span>
-      </div>
-      <div class="tech-grid" id="tech-grid"></div>
-    </section>
-  </main>
+  /* ---------------- Content ---------------- */
+  var PROJECTS = [
+    { t: 'KilllTheFrizz', s: 'beta', sl: 'Beta', k: 'Tech mod', d: 'Makes crowded Minecraft 1.21.1 servers breathe again. Idle entities sleep, villager AI is throttled and collisions get cheaper.', g: ['Java', 'NeoForge', 'Server optimization', 'Performance'], u: 'https://github.com/gdacoff/KilllTheFrizz' },
+    { t: 'LucasMod', s: 'dev', sl: 'In development', k: 'Commercial mod', d: 'A private commission about building a city block by block: urban growth, management systems and custom gameplay loops.', g: ['Java', 'Minecraft', 'Commercial'], u: 'https://github.com/gdacoff/LucasMod' },
+    { t: 'x1.5.9_delta', s: 'dev', sl: 'In development', k: 'Horror mod', d: 'Atmospheric retro horror built around vulnerability and slow psychological tension.', g: ['Java', 'Fabric / Forge', 'Atmospheric horror'], u: 'https://github.com/gdacoff/x1.5.9_delta' },
+    { t: 'alpha_deprecated', s: 'done', sl: 'Completed', k: 'Horror mod', d: 'A retro horror concept rebuilt from the core mechanics of a leaked 2009 alpha.', g: ['Minecraft', 'Retro horror', 'Legacy archive'], u: 'https://github.com/gdacoff/Alpha_Deprecated' },
+    { t: 'SearchGitKillerApp', s: 'dev', sl: 'In development', k: 'Desktop tool', d: 'Find a GitHub repository when you remember what it does but not what it is called. Fast desktop search for rough descriptions.', g: ['Rust', 'Desktop', 'Search engine'], u: 'https://github.com/gdacoff/SearchGitKillerApp' },
+    { t: 'SearchGitKiller', s: 'hold', sl: 'On hold', k: 'Web tool', d: 'The web version of the same idea: describe a project in plain words and let heuristics search GitHub.', g: ['JavaScript', 'Web', 'GitHub API'], u: 'https://github.com/gdacoff/SearchGitKiller' }
+  ];
+  var STATE_COLOR = { beta: 'var(--s-beta)', dev: 'var(--s-dev)', done: 'var(--s-done)', hold: 'var(--s-hold)' };
 
-  <footer class="site-footer">
-    <p class="footer-quote">“If the king doesn't move, then his subjects won't follow.”</p>
-    <p class="footer-copy">© KillerZero (gdacoff). Built with Three.js &amp; Royal Britannia Aesthetics.</p>
-  </footer>
+  var PLATFORMS = [
+    { n: 'GitHub', d: 'Source code and open repositories', u: 'https://github.com/gdacoff', c: '#c9d1d9', p: 'M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z' },
+    { n: 'Modrinth', d: 'Mod releases and downloads', u: 'https://modrinth.com/user/gdacoff', c: '#1bd96a', p: 'M12.252 2c-5.514 0-9.986 4.472-9.986 9.986 0 2.454.887 4.704 2.365 6.452.17-.306.402-.577.683-.804l2.802-2.26a3.834 3.834 0 0 1 1.53-.745 3.854 3.854 0 0 1 1.884.095l.138.046c.553.187 1.043.518 1.417.957l2.13 2.502a1.92 1.92 0 0 0 1.46.678h.034a1.92 1.92 0 0 0 1.458-.678l3.14-3.69a9.92 9.92 0 0 0 1.93-5.539C22.238 6.472 17.766 2 12.252 2zm-4.78 4.757a1.92 1.92 0 1 1 0 3.84 1.92 1.92 0 0 1 0-3.84zm9.56 0a1.92 1.92 0 1 1 0 3.84 1.92 1.92 0 0 1 0-3.84z' },
+    { n: 'CurseForge', d: 'Mod releases and downloads', u: 'https://www.curseforge.com/members/gdacoff/projects', c: '#f16436', p: 'M12 2 2 7v10l10 5 10-5V7L12 2zm0 2.3 7.5 3.75L12 11.8 4.5 8.05 12 4.3zM4 9.6l7 3.5v6.6l-7-3.5V9.6zm9 10.1v-6.6l7-3.5v6.6l-7 3.5z' },
+    { n: 'TikTok', d: 'Dev logs and mod showcases', u: 'https://tiktok.com/@gdacoff', c: '#25f4ee', p: 'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z' },
+    { n: 'Discord', d: 'Direct messages and community', u: 'https://discord.com/users/846024512611942401', c: '#5865f2', p: 'M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z' },
+    { n: 'Telegram', d: 'Direct messages and dev channel', u: 'https://t.me/gdacoff', c: '#229ed9', p: 'M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.197 1.006.128.828.922z' },
+    { n: 'SpigotMC', d: 'Server plugins and community', u: 'https://www.spigotmc.org/members/killerzero_11.2632826/', c: '#ed8106', p: 'M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z' },
+    { n: 'BuiltByBit', d: 'Commercial plugins and services', u: 'https://builtbybit.com/members/gdacoff.952782/', c: '#4f8ef7', p: 'M4 4h10a4 4 0 010 8H4z M4 12h12a4 4 0 010 8H4z' },
+    { n: 'YouTube', d: 'Video showcases and overviews', u: 'https://www.youtube.com/@gdacoff0', c: '#ff3b3b', p: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z' }
+  ];
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="js/three-scene.js?v=3.4" defer></script>
-  <script src="js/main.js?v=3.4" defer></script>
+  var TOOLBOX = [
+    { c: 'Languages', i: ['Java', 'Rust', 'Go', 'Python', 'JavaScript'] },
+    { c: 'Mod loaders', i: ['NeoForge', 'Fabric', 'Minecraft Forge'] },
+    { c: 'Web', i: ['HTML5', 'CSS3'] },
+    { c: 'Tooling', i: ['IntelliJ IDEA', 'VS Code', 'Gradle', 'Git'] }
+  ];
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  document.getElementById('index').innerHTML = PROJECTS.map(function (p) {
+    return '<li class="row">' +
+      '<div><h3><a href="' + esc(p.u) + '" target="_blank" rel="noopener noreferrer">' + esc(p.t) + '</a></h3>' +
+      '<div class="kind"><span>' + esc(p.k) + '</span><span class="state" style="--c:' + STATE_COLOR[p.s] + '">' + esc(p.sl) + '</span></div></div>' +
+      '<p>' + esc(p.d) + '</p>' +
+      '<div class="side"><ul class="tags">' + p.g.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' +
+      '<span class="open">Open on GitHub</span></div></li>';
+  }).join('');
+
+  document.getElementById('platformList').innerHTML = PLATFORMS.map(function (p) {
+    return '<a class="plat" href="' + esc(p.u) + '" target="_blank" rel="noopener noreferrer" style="--brand:' + esc(p.c) + '">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + esc(p.p) + '" fill="currentColor"/></svg>' +
+      '<span><b>' + esc(p.n) + '</b><small>' + esc(p.d) + '</small></span></a>';
+  }).join('');
+
+  document.getElementById('toolbox').innerHTML = TOOLBOX.map(function (g) {
+    return '<div><h3>' + esc(g.c) + '</h3><ul>' + g.i.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+  }).join('');
+
+  /* ---------------- Menu ---------------- */
+  var menuBtn = document.getElementById('menuBtn');
+  var sheet = document.getElementById('sheet');
+  function setMenu(open) {
+    sheet.hidden = !open;
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menuBtn.textContent = open ? 'Close' : 'Menu';
+    menuBtn.style.position = open ? 'relative' : '';
+    menuBtn.style.zIndex = open ? '36' : '';
+  }
+  menuBtn.addEventListener('click', function () { setMenu(sheet.hidden); });
+  sheet.addEventListener('click', function (e) { if (e.target.tagName === 'A') setMenu(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+  /* ---------------- Title: fit to width, then animate letters in ---------------- */
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+  var title = document.getElementById('title');
+  var word = title.textContent;
+  title.innerHTML = word.split('').map(function (c, i) { return '<span class="ch" style="--i:' + i + '" aria-hidden="true">' + c + '</span>'; }).join('');
+
+  function fitTitle() {
+    var box = title.parentElement;
+    var avail = box.clientWidth - parseFloat(getComputedStyle(box).paddingLeft) - parseFloat(getComputedStyle(box).paddingRight);
+    title.style.fontSize = '100px';
+    var w = title.scrollWidth || 1;
+    title.style.fontSize = Math.floor(100 * avail / w * 0.995) + 'px';
+  }
+  fitTitle();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitle);
+  window.addEventListener('resize', fitTitle, { passive: true });
+  requestAnimationFrame(function () { title.classList.add('go'); });
+
+  /* ---------------- 3D scene ---------------- */
+  var canvas = document.getElementById('scene');
+  var fallback = document.getElementById('fallback');
+  function showFallback() { fallback.hidden = false; canvas.style.display = 'none'; }
+  function webglOK() {
+    try { var c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); }
+    catch (e) { return false; }
+  }
+  if (typeof THREE === 'undefined' || !webglOK()) { showFallback(); return; }
+
+  try { initScene(); } catch (err) { if (window.console) console.warn('Scene failed, showing fallback', err); showFallback(); }
+
+  function initScene() {
+    var MAX_DPR = coarse ? 1.5 : 2, MIN_DPR = 1;
+    var dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    var INK = 0x0e0408;
+
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: !coarse, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.9;
+
+    var scene = new THREE.Scene();
+    scene.background = new THREE.Color(INK);
+    scene.fog = new THREE.Fog(INK, 11, 27);
+
+    var camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 10);
+
+    /* Environment: what the chrome and the lacquer reflect */
+    (function buildEnv() {
+      var env = new THREE.Scene();
+      var dome = new THREE.Mesh(new THREE.SphereGeometry(20, 32, 16), new THREE.MeshBasicMaterial({ color: 0x14050b, side: THREE.BackSide }));
+      env.add(dome);
+      var keep = [dome];
+      function panel(color, k, w, h, x, y, z) {
+        var m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(k), side: THREE.DoubleSide }));
+        m.position.set(x, y, z); m.lookAt(0, 0, 0); env.add(m); keep.push(m);
+      }
+      panel(0xffffff, 7.0, 16, 3, 0, 13, 3);       // overhead softbox
+      panel(0xffffff, 0.45, 30, 9, 0, 5, 15);       // soft front wall, upper half only: gives flat faces a light/dark edge
+      panel(0xffd9cf, 0.2, 30, 5, 0, -4, 15);      // dim warm front floor
+      panel(0xffffff, 4.5, 4, 14, -13, 1, 5);      // cool white strip, left
+      panel(0xff2a46, 6.0, 4, 14, 13, 2, 4);       // crimson strip, right
+      panel(0xffe2d0, 3.0, 12, 3, 0, -9, 7);       // low warm bounce
+      panel(0xff2a46, 3.5, 18, 4, 0, 3, -14);      // crimson wall behind
+      panel(0xffffff, 2.5, 3, 10, 9, -3, -9);      // rim strip, back right
+      var pm = new THREE.PMREMGenerator(renderer);
+      scene.environment = pm.fromScene(env, 0.03).texture;
+      pm.dispose();
+      keep.forEach(function (m) { m.geometry.dispose(); m.material.dispose(); });
+    })();
+
+    var chromeMat = new THREE.MeshStandardMaterial({ color: 0xeceff6, metalness: 1.0, roughness: 0.14, envMapIntensity: 1.25 });
+    var lacquerMat = coarse
+      ? new THREE.MeshStandardMaterial({ color: 0x7d0618, metalness: 0.5, roughness: 0.28, envMapIntensity: 0.9 })
+      : new THREE.MeshPhysicalMaterial({ color: 0x7d0618, metalness: 0.5, roughness: 0.26, clearcoat: 1.0, clearcoatRoughness: 0.05, envMapIntensity: 0.9 });
+    var gemMat = new THREE.MeshStandardMaterial({ color: 0xff2a46, emissive: 0xff1633, emissiveIntensity: 1.7, roughness: 0.2, metalness: 0.15, flatShading: true });
+
+    /* Seal: swept-blade ring + crown + gem + chrome lining */
+    var seal = new THREE.Group();
+
+    function bladeRingGeo() {
+      var N = 14, R0 = 1.95, R1 = 2.6, RIN = 1.5, step = Math.PI * 2 / N;
+      var sh = new THREE.Shape();
+      for (var i = 0; i < N; i++) {
+        var a = i * step;
+        var vx = Math.cos(a) * R0, vy = Math.sin(a) * R0;
+        var tx = Math.cos(a + step * 0.78) * R1, ty = Math.sin(a + step * 0.78) * R1;
+        if (i === 0) sh.moveTo(vx, vy); else sh.lineTo(vx, vy);
+        sh.lineTo(tx, ty);
+      }
+      sh.closePath();
+      var hole = new THREE.Path(); hole.absarc(0, 0, RIN, 0, Math.PI * 2, true); sh.holes.push(hole);
+      var g = new THREE.ExtrudeGeometry(sh, { depth: 0.22, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.07, bevelSegments: 4, curveSegments: 96 });
+      g.center();
+      return g;
+    }
+    var ring = new THREE.Mesh(bladeRingGeo(), lacquerMat);
+    seal.add(ring);
+
+    var lining = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.055, 18, 140), chromeMat);
+    seal.add(lining);
+
+    function crownGeo() {
+      var P = [[-1.05, -0.6], [-1.05, 0.5], [-0.78, 0.0], [-0.52, 0.78], [-0.26, 0.0], [0, 1.08], [0.26, 0.0], [0.52, 0.78], [0.78, 0.0], [1.05, 0.5], [1.05, -0.6]];
+      var sh = new THREE.Shape();
+      P.forEach(function (p, i) { if (i === 0) sh.moveTo(p[0], p[1]); else sh.lineTo(p[0], p[1]); });
+      sh.closePath();
+      var g = new THREE.ExtrudeGeometry(sh, { depth: 0.3, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.09, bevelSegments: 5 });
+      g.translate(0, -0.24, -0.16);
+      return g;
+    }
+    var crown = new THREE.Mesh(crownGeo(), chromeMat);
+    seal.add(crown);
+
+    var tipGeo = new THREE.SphereGeometry(0.075, 16, 12);
+    [[-1.05, 0.5], [-0.52, 0.78], [0, 1.08], [0.52, 0.78], [1.05, 0.5]].forEach(function (p) {
+      var s = new THREE.Mesh(tipGeo, gemMat); s.position.set(p[0], p[1] - 0.24 + 0.06, 0); seal.add(s);
+    });
+
+    var gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.34, 0), gemMat);
+    gem.scale.set(0.8, 1.3, 0.8); gem.position.set(0, -0.2, 0.3);
+    seal.add(gem);
+
+    var gemLight = new THREE.PointLight(0xff2a46, 2.4, 9, 2);
+    gemLight.position.set(0, -0.2, 1.3);
+    seal.add(gemLight);
+
+    /* Orbit rings with satellites */
+    function orbit(radius, tiltX, tiltY, tiltZ, sats) {
+      var r = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.014, 8, 220), chromeMat);
+      r.rotation.set(tiltX, tiltY, tiltZ);
+      for (var i = 0; i < sats; i++) {
+        var pivot = new THREE.Group(); pivot.rotation.z = (i / sats) * Math.PI * 2;
+        var s = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12), gemMat); s.position.x = radius;
+        pivot.add(s); r.add(pivot);
+      }
+      seal.add(r); return r;
+    }
+    var orbitA = orbit(3.2, 1.25, 0.2, 0, 2);
+    var orbitB = orbit(3.7, -0.9, 0.0, 0.5, 1);
+
+    /* Glow behind the seal */
+    function glowTexture() {
+      var c = document.createElement('canvas'); c.width = c.height = 256;
+      var x = c.getContext('2d'); var g = x.createRadialGradient(128, 128, 0, 128, 128, 128);
+      g.addColorStop(0, 'rgba(255,255,255,0.9)'); g.addColorStop(0.3, 'rgba(255,255,255,0.35)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      x.fillStyle = g; x.fillRect(0, 0, 256, 256);
+      return new THREE.CanvasTexture(c);
+    }
+    var glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: 0xe11231, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false }));
+    glow.scale.set(7.5, 7.5, 1); glow.position.set(0, 0, -1.6);
+    seal.add(glow);
+
+    var root = new THREE.Group();
+    root.add(seal);
+    scene.add(root);
+
+    /* Shards drifting around the seal */
+    var SHARDS = coarse ? 34 : 70;
+    var shardMesh = new THREE.InstancedMesh(new THREE.OctahedronGeometry(0.12, 0), chromeMat, SHARDS);
+    var dummy = new THREE.Object3D(), col = new THREE.Color();
+    for (var i = 0; i < SHARDS; i++) {
+      var th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1), rad = 4.4 + Math.random() * 4.2;
+      dummy.position.set(Math.sin(ph) * Math.cos(th) * rad, Math.sin(ph) * Math.sin(th) * rad * 0.7, Math.cos(ph) * rad * 0.8);
+      dummy.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
+      var k = 0.45 + Math.random() * 1.1; dummy.scale.set(k * 0.6, k * 1.5, k * 0.6);
+      dummy.updateMatrix(); shardMesh.setMatrixAt(i, dummy.matrix);
+      col.set(i % 4 === 0 ? 0xff3350 : 0xdfe2ea); shardMesh.setColorAt(i, col);
+    }
+    shardMesh.instanceMatrix.needsUpdate = true;
+    if (shardMesh.instanceColor) shardMesh.instanceColor.needsUpdate = true;
+    root.add(shardMesh);
+
+    /* Dust */
+    var DUST = coarse ? 160 : 380;
+    var dp = new Float32Array(DUST * 3);
+    for (var d = 0; d < DUST; d++) { dp[d * 3] = (Math.random() - 0.5) * 36; dp[d * 3 + 1] = (Math.random() - 0.5) * 22; dp[d * 3 + 2] = -Math.random() * 16 + 3; }
+    var dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+    var dust = new THREE.Points(dg, new THREE.PointsMaterial({ color: 0xff6b7d, size: 0.045, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }));
+    scene.add(dust);
+
+    /* Lights */
+    scene.add(new THREE.AmbientLight(0x331018, 0.6));
+    var key = new THREE.DirectionalLight(0xffffff, 0.55); key.position.set(-4, 6, 6); scene.add(key);
+    var rim = new THREE.DirectionalLight(0xff2a46, 1.8); rim.position.set(6, 1, -4); scene.add(rim);
+
+    /* ---- Scroll choreography ---- */
+    var STATES = [
+      { x: 2.3, y: -0.2, z: 0.0, s: 1.0, ry: 0.0, rx: 0.1 },      // hero
+      { x: -3.7, y: 0.1, z: -0.6, s: 0.8, ry: 0.85, rx: 0.16 },   // about
+      { x: 4.3, y: 1.5, z: -4.0, s: 0.55, ry: -0.8, rx: -0.1 },   // projects
+      { x: 3.9, y: -0.4, z: -1.8, s: 0.68, ry: 0.7, rx: 0.14 },   // platforms
+      { x: -4.1, y: 0.3, z: -2.2, s: 0.66, ry: -0.75, rx: 0.1 },  // toolbox
+      { x: 3.3, y: 0.3, z: 0.4, s: 1.0, ry: 0.0, rx: 0.06 }       // contact
+    ];
+    var sections = Array.prototype.slice.call(document.querySelectorAll('[data-scene]'));
+    var centers = [];
+    function measure() {
+      centers = sections.map(function (el) { var r = el.getBoundingClientRect(); return r.top + window.scrollY + r.height / 2; });
+    }
+    var pos = { idx: 0, t: 0 };
+    function readScroll() {
+      var mid = window.scrollY + window.innerHeight * 0.5;
+      var n = centers.length, i = 0;
+      while (i < n - 1 && mid >= centers[i + 1]) i++;
+      var t = i >= n - 1 ? 0 : Math.min(1, Math.max(0, (mid - centers[i]) / (centers[i + 1] - centers[i])));
+      if (mid < centers[0]) { i = 0; t = 0; }
+      pos.idx = i; pos.t = t;
+    }
+    var queued = false;
+    window.addEventListener('scroll', function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; readScroll(); }); }, { passive: true });
+    function relayout() {
+      var w = window.innerWidth, h = window.innerHeight;
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+      measure(); readScroll();
+    }
+    window.addEventListener('resize', relayout, { passive: true });
+    window.addEventListener('load', function () { measure(); readScroll(); });
+    if (window.ResizeObserver) new ResizeObserver(function () { measure(); readScroll(); }).observe(document.body);
+    measure(); readScroll();
+
+    var cur = { x: STATES[0].x, y: STATES[0].y, z: STATES[0].z, s: 0.5, ry: STATES[0].ry - 2.2, rx: STATES[0].rx };
+    var px = 0, py = 0, tpx = 0, tpy = 0;
+    if (!coarse && !reduce) {
+      window.addEventListener('pointermove', function (e) { tpx = (e.clientX / window.innerWidth - 0.5) * 2; tpy = (e.clientY / window.innerHeight - 0.5) * 2; }, { passive: true });
+    }
+
+    /* Adaptive quality */
+    var pf = 0, pa = 0, floorHit = false;
+    function adapt(raw) {
+      if (raw > 0.25) return;
+      pa += raw; pf++;
+      if (pf < 90) return;
+      var avg = pa / pf; pf = 0; pa = 0;
+      if (avg <= 1 / 40) return;
+      if (dpr > MIN_DPR) { dpr = Math.max(MIN_DPR, dpr - 0.25); renderer.setPixelRatio(dpr); renderer.setSize(window.innerWidth, window.innerHeight, false); }
+      else if (!floorHit) { floorHit = true; shardMesh.visible = false; dust.visible = false; }
+    }
+
+    var clock = new THREE.Clock(), raf = 0, introStart = performance.now();
+    function ease(x) { return 1 - Math.pow(1 - x, 3); }
+
+    function frame() {
+      raf = requestAnimationFrame(frame);
+      var raw = clock.getDelta(), dt = Math.min(raw, 0.05), t = clock.elapsedTime;
+      adapt(raw);
+
+      var mobile = window.innerWidth < 760;
+      var a = STATES[pos.idx], b = STATES[Math.min(pos.idx + 1, STATES.length - 1)];
+      var u = pos.t * pos.t * (3 - 2 * pos.t);
+      function mix(k) { return a[k] + (b[k] - a[k]) * u; }
+      var tx = mix('x') * (mobile ? 0.1 : 1);
+      var ty = mix('y') + (mobile ? (pos.idx === 0 ? 2.0 : 1.3) : 0);
+      var tz = mix('z');
+      var ts = mix('s') * (mobile ? 0.62 : 1);
+
+      var intro = reduce ? 1 : Math.min(1, (performance.now() - introStart) / 1800);
+      var ie = ease(intro);
+
+      var k = 1 - Math.exp(-dt * 4.2);
+      cur.x += (tx - cur.x) * k; cur.y += (ty - cur.y) * k; cur.z += (tz - cur.z) * k;
+      cur.s += (ts * (0.55 + 0.45 * ie) - cur.s) * k;
+      cur.ry += (mix('ry') - (1 - ie) * 2.2 - cur.ry) * k;
+      cur.rx += (mix('rx') - cur.rx) * k;
+
+      var pk = 1 - Math.exp(-dt * 3);
+      px += (tpx - px) * pk; py += (tpy - py) * pk;
+
+      var idle = reduce ? 0 : Math.sin(t * 0.45) * 0.14;
+      root.position.set(cur.x, cur.y + (reduce ? 0 : Math.sin(t * 0.7) * 0.08), cur.z);
+      root.scale.setScalar(cur.s);
+      root.rotation.set(cur.rx - py * 0.18, cur.ry + idle + px * 0.3, 0);
+
+      if (!reduce) {
+        ring.rotation.z = t * 0.12;
+        orbitA.rotation.z = t * 0.35;
+        orbitB.rotation.z = -t * 0.26;
+        gem.rotation.y = t * 0.9;
+        var pulse = 1 + Math.sin(t * 2.0) * 0.06;
+        gem.scale.set(0.8 * pulse, 1.3 * pulse, 0.8 * pulse);
+        gemLight.intensity = 2.2 + Math.sin(t * 2.0) * 0.4;
+        shardMesh.rotation.y = t * 0.05; shardMesh.rotation.x = t * 0.02;
+        dust.rotation.y = t * 0.01;
+      }
+      renderer.render(scene, camera);
+    }
+
+    function start() { if (raf) return; clock.getDelta(); pf = 0; pa = 0; raf = requestAnimationFrame(frame); }
+    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+    start();
+  }
+})();
+</script>
+
 </body>
 </html>
